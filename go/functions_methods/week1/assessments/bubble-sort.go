@@ -1,23 +1,46 @@
 package main
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
 
 func main() {
-	slice := []int{}
+	slice := ReadUserInput()
 
-	fmt.Print("Enter up to ten integers")
-	for i := 0; i < 10; i++ {
-		var input int
-		_, err := fmt.Scan(&input)
+	BubbleSort(slice)
+
+	fmt.Println("Result:")
+	print(slice)
+}
+
+func ReadUserInput() []int {
+	var slice []int
+	reader := bufio.NewReader(os.Stdin)
+
+	for {
+		fmt.Println("Enter an integer or press enter to sort")
+		text, err := reader.ReadString('\n')
+
+		if err != nil {
+			return slice
+		}
+
+		inputValue, err := strconv.Atoi(strings.TrimSpace(text))
 		if err != nil {
 			break
 		}
 
-		slice = append(slice, input)
+		slice = append(slice, inputValue)
+		if len(slice) == 10 {
+			break
+		}
 	}
 
-	BubbleSort(slice)
-	print(slice)
+	return slice
 }
 
 func BubbleSort(slice []int) {
