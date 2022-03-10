@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -41,37 +40,41 @@ func (animal Animal) Execute(action string) {
 	}
 }
 
+type UserInput struct {
+	animalName string
+	action     string
+}
+
+func (userInput *UserInput) Read() {
+	reader := bufio.NewReader(os.Stdin)
+	text, err := reader.ReadString('\n')
+	if err != nil {
+		panic(err)
+	}
+
+	input := strings.Split(text, " ")
+	if len(input) == 2 {
+		userInput.animalName = input[0]
+		userInput.action = input[1]
+	}
+}
+
 func main() {
 	animals := map[string]Animal{"cow": buildCow(), "bird": buildBird(), "snake": buildSnake()}
 
 	for {
-		reader := bufio.NewReader(os.Stdin)
-
 		fmt.Print(">")
-		text, err := reader.ReadString('\n')
-		if err != nil {
-			panic(err)
-		}
 
-		var animalName string
-		var action string
+		var userInput UserInput
+		userInput.Read()
 
-		input := strings.Split(text, " ")
-		if len(input) == 2 {
-			animalName = input[0]
-			action = input[1]
-		} else {
-			fmt.Println("Invalid input. Try again")
+		animal, found := animals[userInput.animalName]
+		if !found {
+			fmt.Printf("Animal %s not found\n", userInput.animalName)
 			continue
 		}
 
-		animal, err := getByName(animals, animalName)
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-
-		animal.Execute(action)
+		animal.Execute(userInput.action)
 	}
 }
 
@@ -97,14 +100,4 @@ func buildSnake() Animal {
 		locomotion: "slither",
 		noise:      "hss",
 	}
-}
-
-func getByName(animals map[string]Animal, animalName string) (Animal, error) {
-	for name, animal := range animals {
-		if name == animalName {
-			return animal, nil
-		}
-	}
-
-	return Animal{}, errors.New(fmt.Sprintf("Animal %s não encontrado", animalName))
 }
