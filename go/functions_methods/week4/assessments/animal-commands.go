@@ -111,12 +111,10 @@ func queryAnimal(animals []Animal, userInput UserInput) {
 				animalFound = animal.(Cow)
 			}
 		case Bird:
-			animalFound = animal.(Bird)
 			if animal.(Bird).name == userInput.animalName {
 				animalFound = animal.(Bird)
 			}
 		case Snake:
-			animalFound = animal.(Snake)
 			if animal.(Snake).name == userInput.animalName {
 				animalFound = animal.(Snake)
 			}
